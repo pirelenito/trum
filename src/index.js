@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { render } from 'react-dom'
 
 const startTimestamp = Date.now()
@@ -21,7 +21,6 @@ navigator.requestMIDIAccess().then(
             device,
           }
 
-          console.log(tick)
           drumNotes.push(tick)
         }
       }
@@ -30,4 +29,14 @@ navigator.requestMIDIAccess().then(
   error => console.log(error)
 )
 
-render(<h1>Hello World</h1>, document.getElementById('root'))
+const dumpNotes = () => {
+  console.log(JSON.stringify(drumNotes))
+}
+
+class App extends Component {
+  render() {
+    return <button onClick={dumpNotes}>Dump notes</button>
+  }
+}
+
+render(<App />, document.getElementById('root'))
