@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import store from './store'
 import midiSource from './sources/midiSource'
 import tickSource from './sources/tickSource'
-import App from './App'
+import App from './components/App'
 
 midiSource(store.dispatch)
 tickSource(store.dispatch)
