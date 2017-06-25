@@ -1,4 +1,5 @@
 import React from 'react'
+import parseTabs from '../parseTabs'
 
 const styles = {
   container: {
@@ -37,8 +38,23 @@ const styles = {
   },
   scrollingNotesInstrument: {
     flexGrow: 1,
+    border: '5px solid rgb(27, 169, 141)',
     background: 'rgb(27, 169, 141)',
     margin: '0 5px',
+    overflow: 'hidden',
+  },
+  dullNote: {
+    borderTop: '2px solid white',
+    margin: '49px 0px',
+    opacity: 0.5,
+    display: 'inline-block',
+    width: '100%',
+  },
+  liveNote: {
+    borderTop: '20px solid white',
+    margin: '40px 0px',
+    display: 'inline-block',
+    width: '100%',
   },
 }
 
@@ -50,44 +66,17 @@ S |----o-------o---|----o-------o---|----o-------o---|----o-------o---|
 F |------------o-oo|o-o-o-o-o-o---oo|o-o---------o-oo|o-o-o-o-o-------|
 B |o-o-------------|o-o-------------|o-o-------------|o-o-------------|`
 
-const instruments = [
-  {
-    symbol: 'Rd',
-    midiNote: 36,
-    type: 'cymbal',
-  },
-  {
-    symbol: 'H',
-    midiNote: 36,
-    type: 'cymbal',
-  },
-  {
-    symbol: 't',
-    midiNote: 36,
-    type: 'drum',
-  },
-  {
-    symbol: 'S',
-    midiNote: 36,
-    type: 'drum',
-  },
-  {
-    symbol: 'F',
-    midiNote: 36,
-    type: 'drum',
-  },
-  {
-    symbol: 'B',
-    midiNote: 36,
-    type: 'pedal',
-  },
-]
+const Note = ({ note }) => <div style={note === '-' ? styles.dullNote : styles.liveNote} />
 
-const ScrollingNotes = ({ instruments, notes }) => {
+const ScrollingNotes = ({ instruments }) => {
   return (
     <div style={styles.scrollingNotes}>
       {instruments.map((instrument, index) => {
-        return <div style={styles.scrollingNotesInstrument} />
+        return (
+          <div style={styles.scrollingNotesInstrument}>
+            {instrument.notes.map(note => <Note note={note} />)}
+          </div>
+        )
       })}
     </div>
   )
@@ -97,7 +86,7 @@ export default () => {
   return (
     <div style={styles.container}>
       <div style={styles.gameplay}>
-        <ScrollingNotes instruments={instruments} />
+        <ScrollingNotes instruments={parseTabs(sampleTabs)} />
       </div>
       <textarea
         wrap="off"
