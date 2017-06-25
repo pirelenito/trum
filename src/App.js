@@ -1,8 +1,15 @@
 import React, { Component } from 'react'
-// import Playback from './components/Playback'
+import { connect } from 'react-redux'
+import Playback from './components/Playback'
+import { getTracksAndNotesPosition } from './store'
 
-export default class App extends Component {
+class App extends Component {
   render() {
-    return <div />
+    return <div><Playback tracks={this.props.tracks} /></div>
   }
 }
+
+const mapStateToProps = state => ({ tracks: getTracksAndNotesPosition(state) })
+const mapDispatchToProps = () => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
