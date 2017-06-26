@@ -9,36 +9,35 @@ const styles = {
     left: 0,
     width: '100%',
     height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  gameplay: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    background: '#1abc9c',
   },
   tabDefinition: {
+    position: 'absolute',
+    top: 'calc(100% - 150px)',
+    left: 0,
+    width: '100%',
+    height: '150px',
     border: 'none',
     padding: 10,
     color: '#99c595',
     background: '#1b2b34',
-    width: '100%',
     resize: 'none',
     fontFamily: 'monospace',
     fontSize: '1em',
     overflowY: 'scroll',
   },
   scrollingNotes: {
-    flexGrow: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: 'calc(100% - 150px)',
     background: '#1abc9c',
     display: 'flex',
-    width: '100%',
-    maxWidth: '900px',
-    margin: '0 auto',
+    justifyContent: 'center',
   },
   scrollingNotesInstrument: {
-    flexGrow: 1,
+    height: '100%',
+    width: '100px',
     border: '5px solid rgb(27, 169, 141)',
     background: 'rgb(27, 169, 141)',
     margin: '0 5px',
@@ -106,9 +105,7 @@ const ScrollingNotes = ({ instruments }) => {
 export default () => {
   return (
     <div style={styles.container}>
-      <div style={styles.gameplay}>
-        <ScrollingNotes instruments={parseTabs(sampleTabs)} />
-      </div>
+      <ScrollingNotes instruments={parseTabs(sampleTabs)} />
       <textarea
         wrap="off"
         value={sampleTabs}
