@@ -1,5 +1,6 @@
 import React from 'react'
 import parseTabs from '../parseTabs'
+import reverse from 'lodash.reverse'
 
 const styles = {
   container: {
@@ -59,23 +60,42 @@ const styles = {
 }
 
 const sampleTabs = `
-C |c-c-----|
-Rd|--------|
-H |--------|
-t |--------|
-S |----o---|
-F |----o-oo|
-B |o-o-----|`
+C |--------|c-c-----|
+Rd|--------|--------|
+H |--------|--------|
+t |--------|--------|
+S |--------|----o---|
+F |--------|----o-oo|
+B |--------|o-o-----|`
+
+const bpm = 132
 
 const Note = ({ note }) => <div style={note === '-' ? styles.dullNote : styles.liveNote} />
 
 const ScrollingNotes = ({ instruments }) => {
   return (
     <div style={styles.scrollingNotes}>
+      <style>
+        {`
+          @keyframes rolling {
+            from { margin-top: -${100 * instruments[0].notes.length}px; }
+            to { margin-top: ${100 * instruments[0].notes.length}px; }
+          }
+          `}
+      </style>
       {instruments.map((instrument, index) => {
         return (
           <div style={styles.scrollingNotesInstrument}>
-            {instrument.notes.map(note => <Note note={note} />)}
+            <div
+              style={{
+                animationName: 'rolling',
+                animationDuration: `${60 / bpm * instrument.notes.length}s`,
+                animationTimingFunction: 'linear',
+                animationIterationCount: 'infinite',
+              }}
+            >
+              {reverse(instrument.notes).map(note => <Note note={note} />)}
+            </div>
           </div>
         )
       })}

@@ -29,6 +29,7 @@
     "sagui": "^9.0.1"
   },
   "dependencies": {
+    "lodash.reverse": "^4.0.1",
     "react": "^v16.0.0-alpha.3",
     "react-dom": "^v16.0.0-alpha.3",
     "react-redux": "^5.0.5",
