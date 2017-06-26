@@ -46,7 +46,7 @@ const styles = {
   dullNote: {
     borderTop: '2px solid white',
     margin: '49px 0px',
-    opacity: 0.5,
+    opacity: 0.2,
     display: 'inline-block',
     width: '100%',
   },
