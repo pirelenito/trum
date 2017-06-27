@@ -1,7 +1,7 @@
 import React from 'react'
 import Track from './Track'
 
-export default function Playback({ instruments, height, time }) {
+export default function Playback({ instruments, height }) {
   return instruments.map(({ notes }, index) =>
     <g
       key={index}
@@ -9,7 +9,7 @@ export default function Playback({ instruments, height, time }) {
         transform: `translateX(${index * 120}px)`,
       }}
     >
-      <Track notes={notes} time={time} height={height} />
+      <Track notes={notes} height={height} />
     </g>
   )
 }

@@ -1,13 +1,16 @@
 import { createStore } from 'redux'
+import { range } from 'ramda'
 import parseTabs from './parseTabs'
 
-const { floor } = Math
+const { ceil, floor } = Math
 
 const TICK = 'TICK'
 const INPUT_NOTE = 'INPUT_NOTE'
 const SET_TABLATURE = 'SET_TABLATURE'
 const PLAY = 'PLAY'
 const RESIZE = 'RESIZE'
+
+const NOTE_SIZE = 100
 
 const initialState = {
   windowSize: {
@@ -66,8 +69,22 @@ export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, 
 // selectors
 export const getPlaybackTime = state =>
   floor((state.now - state.playbackStart) / (60000 / state.bpm) * 100)
-export const getMusicInstruments = state => parseTabs(state.tablature)
+export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 1
+export const getMusicInstruments = state => {
+  const amountOfVisibleNotes = getAmountOfVisibleNotes(state)
+  const instruments = parseTabs(state.tablature)
+  const playbackTime = getPlaybackTime(state)
+  const firstVisibleNote = floor(playbackTime / NOTE_SIZE)
 
+  return instruments.map(instrument => ({
+    ...instrument,
+    notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
+      live: instrument.notes[id % instrument.notes.length] !== '-',
+      id,
+      position: id * NOTE_SIZE - NOTE_SIZE / 2 - playbackTime - NOTE_SIZE,
+    })),
+  }))
+}
 export default createStore(
   rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
