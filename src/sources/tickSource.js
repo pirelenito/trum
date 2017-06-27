@@ -5,5 +5,6 @@ export default dispatch => {
     dispatch(tick(Date.now()))
     window.requestAnimationFrame(frame)
   }
+  dispatch(tick(Date.now()))
   window.requestAnimationFrame(frame)
 }
