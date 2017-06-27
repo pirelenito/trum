@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Playback from './components/Playback'
 import Tablature from './components/Tablature'
-import { getPlaybackTime, setTablature, getMusicInstruments } from './store'
+import { setTablature, getMusicInstruments } from './store'
 
 function App({ width, height, tablature, instruments, onChangeTablature }) {
   return (

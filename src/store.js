@@ -69,7 +69,7 @@ export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, 
 // selectors
 export const getPlaybackTime = state =>
   floor((state.now - state.playbackStart) / (60000 / state.bpm) * 100)
-export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 1
+export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 2
 export const getMusicInstruments = state => {
   const amountOfVisibleNotes = getAmountOfVisibleNotes(state)
   const instruments = parseTabs(state.tablature)
@@ -85,6 +85,7 @@ export const getMusicInstruments = state => {
     })),
   }))
 }
+
 export default createStore(
   rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
