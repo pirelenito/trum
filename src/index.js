@@ -7,6 +7,10 @@ import midiSource from './sources/midiSource'
 import tickSource from './sources/tickSource'
 import windowResizeSource from './sources/windowResizeSource'
 import App from './App'
+import * as metronome from './metronome'
+
+metronome.init()
+metronome.play()
 
 keyDownSource(store.dispatch)
 midiSource(store.dispatch)

@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Hackbit/reactriot2017-batata-frita#readme",
   "devDependencies": {
     "prettier": "^1.4.4",
-    "sagui": "^10.0.0"
+    "sagui": "^10.0.0",
+    "worker-loader": "^0.8.0"
   },
   "dependencies": {
     "lodash.reverse": "^4.0.1",
