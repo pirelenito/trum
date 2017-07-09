@@ -18,17 +18,24 @@ const initialState = {
     height: 0,
   },
   tablature: `
-C |--------|c-c-----|
-Rd|--------|--------|
-H |--------|--------|
-t |--------|--------|
-S |--------|----o---|
-F |--------|----o-oo|
-B |--------|o-o-----|`,
-  trackMapping: { 46: 0, 49: 1, 38: 2, 48: 3, 36: 4, 47: 5, 43: 6, 51: 7 },
+C |X---------------|----------------|X---------------|----------------|
+R |----X---X---X---|X---X---X---X---|----X---X---X---|X---X-------X---|
+S |----o-------o---|----o-------o---|----o-------o---|----o-o-----o---|
+t |----------------|----------------|----------------|-------o--------|
+B |o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|`,
   now: 0,
   playbackStart: 0,
   bpm: 130,
+  drumKit: [
+    { midiNote: 46, label: 'hi-hat', symbols: ['hh', 'h'] },
+    { midiNote: 49, label: 'ride cymbal', symbols: ['rd', 'r'] },
+    { midiNote: 38, label: 'snare drum', symbols: ['sn', 's'] },
+    { midiNote: 48, label: 'high tom', symbols: ['t1', 't'] },
+    { midiNote: 36, label: 'bass drum', symbols: ['db', 'b'] },
+    { midiNote: 47, label: 'low tom', symbols: ['t2'] },
+    { midiNote: 43, label: 'floor tom', symbols: ['ft', 'f'] },
+    { midiNote: 51, label: 'crash cymbal', symbols: ['cc', 'c'] },
+  ],
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -76,14 +83,27 @@ export const getMusicInstruments = state => {
   const playbackTime = getPlaybackTime(state)
   const firstVisibleNote = floor(playbackTime / NOTE_SIZE)
 
-  return instruments.map(instrument => ({
-    ...instrument,
-    notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
-      live: instrument.notes[id % instrument.notes.length] !== '-',
-      id,
-      position: id * NOTE_SIZE - NOTE_SIZE / 2 - playbackTime - NOTE_SIZE,
-    })),
-  }))
+  return state.drumKit.map(instrument => {
+    const musicInstrument = instruments.find(musicInstrument => {
+      return instrument.symbols.indexOf(musicInstrument.symbol) !== -1
+    })
+
+    if (!musicInstrument) {
+      return {
+        symbol: instrument.symbols[0],
+        notes: [],
+      }
+    }
+
+    return {
+      symbol: musicInstrument.symbol,
+      notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
+        live: musicInstrument.notes[id % musicInstrument.notes.length] !== '-',
+        id,
+        position: id * NOTE_SIZE - NOTE_SIZE / 2 - playbackTime - NOTE_SIZE,
+      })),
+    }
+  })
 }
 
 export default createStore(

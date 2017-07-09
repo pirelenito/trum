@@ -11,15 +11,15 @@ describe('tabs', () => {
   it('should parse a tab definition', () => {
     const expected = [
       {
-        symbol: 'Rd',
+        symbol: 'rd',
         notes: ['c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
       },
       {
-        symbol: 'S',
+        symbol: 's',
         notes: ['-', '-', '-', '-', 'o', '-', '-', '-', '-', '-', '-', '-', 'o', '-', '-', '-'],
       },
       {
-        symbol: 'F',
+        symbol: 'f',
         notes: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'o', '-', 'o', 'o'],
       },
     ]

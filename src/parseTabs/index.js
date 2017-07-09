@@ -5,7 +5,7 @@ export default tabs => {
     return !match
       ? { symbol: 'invalid', notes: [] }
       : {
-          symbol: match[1].trim(),
+          symbol: match[1].trim().toLowerCase(),
           notes: match[2].split('').filter(note => note !== '|' && note !== ' '),
         }
   })
