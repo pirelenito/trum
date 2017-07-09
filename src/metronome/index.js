@@ -84,7 +84,6 @@ export function init() {
 
   timerWorker.onmessage = function(e) {
     if (e.data === 'tick') {
-      console.log('tick!')
       scheduler()
     } else console.log('message: ' + e.data)
   }
