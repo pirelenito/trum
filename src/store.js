@@ -1,7 +1,7 @@
 import { createStore } from 'redux'
 import { range } from 'ramda'
 import parseTabs from './parseTabs'
-import tablature from './tabs/singleStrokeRoll.txt'
+import tablature from './tabs/learnToFly.txt'
 
 const { ceil, floor } = Math
 
