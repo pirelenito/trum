@@ -1,6 +1,6 @@
 export default tabs => {
   return tabs.split('\n').filter(line => line.trim().length > 0).map(line => {
-    const match = line.match(/^(.{2})\|(.+)/)
+    const match = line.match(/^(.{1,2})\|(.+)/)
 
     return !match
       ? { symbol: 'invalid', notes: [] }
