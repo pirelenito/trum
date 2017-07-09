@@ -6,7 +6,7 @@ import { setTablature, getMusicInstruments } from './store'
 
 function App({ width, height, tablature, instruments, onChangeTablature }) {
   return (
-    <main>
+    <main style={{ backgroundColor: '#e5e6eb' }}>
       <svg height={height - 150} width={width} viewBox={`0 0 ${width} ${height - 150}`}>
         <Playback instruments={instruments} width={width} height={height - 150} />
       </svg>
