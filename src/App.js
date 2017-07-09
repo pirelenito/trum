@@ -8,7 +8,7 @@ function App({ width, height, tablature, instruments, onChangeTablature }) {
   return (
     <main>
       <svg height={height - 150} width={width} viewBox={`0 0 ${width} ${height - 150}`}>
-        <Playback instruments={instruments} height={height - 150} />
+        <Playback instruments={instruments} width={width} height={height - 150} />
       </svg>
       <footer style={{ display: 'block', height: 150, width }}>
         <Tablature source={tablature} onChange={onChangeTablature} />
