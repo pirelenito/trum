@@ -5,21 +5,21 @@ import HiHat from './HiHat'
 import Snare from './Snare'
 import Tom from './Tom'
 
-export default ({ icon }) => {
+export default ({ icon, color }) => {
   switch (icon) {
     case 'Cymbal':
-      return <Cymbal />
+      return <Cymbal color={color} />
 
     case 'Snare':
-      return <Snare />
+      return <Snare color={color} />
 
     case 'BassDrum':
-      return <BassDrum />
+      return <BassDrum color={color} />
 
     case 'HiHat':
-      return <HiHat />
+      return <HiHat color={color} />
 
     default:
-      return <Tom />
+      return <Tom color={color} />
   }
 }

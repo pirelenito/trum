@@ -12,7 +12,7 @@ const SET_TABLATURE = 'SET_TABLATURE'
 const PLAY = 'PLAY'
 const RESIZE = 'RESIZE'
 
-export const NOTE_SIZE = 100
+export const NOTE_SIZE = 50
 
 const initialState = {
   windowSize: {
@@ -84,15 +84,15 @@ export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, 
 
 // selectors
 export const getPlaybackTime = state =>
-  floor((state.now - state.playbackStart) / (60000 / state.bpm / 4) * 100)
+  floor((state.now - state.playbackStart) / (60000 / state.bpm / 4) * NOTE_SIZE)
 
-export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 2
+export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 1
 
 export const getMusicInstruments = state => {
   const amountOfVisibleNotes = getAmountOfVisibleNotes(state)
   const instruments = parseTabs(state.tablature)
   const playbackTime = getPlaybackTime(state)
-  const firstVisibleNote = floor(playbackTime / NOTE_SIZE)
+  const firstVisibleNote = floor(playbackTime / NOTE_SIZE) - 1
 
   return state.drumKit.map(instrument => {
     const musicInstrument = instruments.find(musicInstrument => {
