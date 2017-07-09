@@ -7,6 +7,7 @@ const { ceil, floor } = Math
 
 const TICK = 'TICK'
 const INPUT_NOTE = 'INPUT_NOTE'
+const INPUT_FAKE_NOTE = 'INPUT_FAKE_NOTE'
 const SET_TABLATURE = 'SET_TABLATURE'
 const PLAY = 'PLAY'
 const RESIZE = 'RESIZE'
@@ -55,6 +56,19 @@ const rootReducer = (state = initialState, action) => {
           [action.payload.note]: state.now,
         },
       }
+
+    case INPUT_FAKE_NOTE:
+      const instrument = state.drumKit[action.payload]
+
+      if (!instrument) return state
+
+      return {
+        ...state,
+        lastInputNotes: {
+          ...state.lastInputNotes,
+          [instrument.midiNote]: state.now,
+        },
+      }
     default:
       return state
   }
@@ -63,6 +77,7 @@ const rootReducer = (state = initialState, action) => {
 // actions
 export const tick = now => ({ type: TICK, payload: now })
 export const inputNote = info => ({ type: INPUT_NOTE, payload: info })
+export const inputFakeNote = info => ({ type: INPUT_FAKE_NOTE, payload: info })
 export const setTablature = tablature => ({ type: SET_TABLATURE, payload: tablature })
 export const play = timestamp => ({ type: PLAY, payload: timestamp })
 export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, height } })
