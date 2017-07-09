@@ -32,6 +32,7 @@ const initialState = {
     { midiNote: 43, icon: 'Tom', color: '#8ac8da', label: 'floor tom', symbols: ['ft', 'f'] },
     { midiNote: 51, icon: 'Cymbal', color: '#fa9846', label: 'crash cymbal', symbols: ['cc', 'c'] },
   ],
+  lastInputNotes: {},
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -47,15 +48,12 @@ const rootReducer = (state = initialState, action) => {
     case INPUT_NOTE:
       if (action.payload.intensity === 0) return state
 
-      const trackIndex = state.trackMapping[action.payload.note]
-      if (trackIndex === undefined) return state
-
       return {
         ...state,
-        tracks: state.tracks.map((track, index) => {
-          if (index !== trackIndex) return track
-          return [...track, action.payload.timestamp]
-        }),
+        lastInputNotes: {
+          ...state.lastInputNotes,
+          [action.payload.note]: state.now,
+        },
       }
     default:
       return state
@@ -86,9 +84,13 @@ export const getMusicInstruments = state => {
       return instrument.symbols.indexOf(musicInstrument.symbol) !== -1
     })
 
+    const lastMidiNote = state.lastInputNotes[instrument.midiNote] || 0
+    const active = lastMidiNote > state.now - 50 && lastMidiNote < state.now + 200
+
     if (!musicInstrument) {
       return {
         ...instrument,
+        active: active,
         symbol: instrument.symbols[0],
         notes: [],
       }
@@ -96,6 +98,7 @@ export const getMusicInstruments = state => {
 
     return {
       ...instrument,
+      active: active,
       symbol: musicInstrument.symbol,
       notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
         live: musicInstrument.notes[id % musicInstrument.notes.length] !== '-',
