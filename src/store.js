@@ -1,7 +1,7 @@
 import { createStore } from 'redux'
 import { range } from 'ramda'
 import parseTabs from './parseTabs'
-import singleStrokeRoll from './tabs/singleStrokeRoll.txt'
+import tablature from './tabs/singleStrokeRoll.txt'
 
 const { ceil, floor } = Math
 
@@ -18,19 +18,19 @@ const initialState = {
     width: 0,
     height: 0,
   },
-  tablature: singleStrokeRoll,
+  tablature: tablature,
   now: 0,
   playbackStart: 0,
   bpm: 60,
   drumKit: [
-    { midiNote: 46, label: 'hi-hat', symbols: ['hh', 'h'] },
-    { midiNote: 49, label: 'ride cymbal', symbols: ['rd', 'r'] },
-    { midiNote: 38, label: 'snare drum', symbols: ['sn', 's'] },
-    { midiNote: 48, label: 'high tom', symbols: ['t1', 't'] },
-    { midiNote: 36, label: 'bass drum', symbols: ['db', 'b'] },
-    { midiNote: 47, label: 'low tom', symbols: ['t2'] },
-    { midiNote: 43, label: 'floor tom', symbols: ['ft', 'f'] },
-    { midiNote: 51, label: 'crash cymbal', symbols: ['cc', 'c'] },
+    { midiNote: 46, color: '#f7a59c', label: 'hi-hat', symbols: ['hh', 'h'] },
+    { midiNote: 49, color: '#fa9846', label: 'ride cymbal', symbols: ['rd', 'r'] },
+    { midiNote: 38, color: '#5b9193', label: 'snare drum', symbols: ['sn', 's'] },
+    { midiNote: 48, color: '#8ac8da', label: 'high tom', symbols: ['t1', 't'] },
+    { midiNote: 36, color: '#613846', label: 'bass drum', symbols: ['db', 'b'] },
+    { midiNote: 47, color: '#8ac8da', label: 'low tom', symbols: ['t2'] },
+    { midiNote: 43, color: '#8ac8da', label: 'floor tom', symbols: ['ft', 'f'] },
+    { midiNote: 51, color: '#fa9846', label: 'crash cymbal', symbols: ['cc', 'c'] },
   ],
 }
 
@@ -88,12 +88,14 @@ export const getMusicInstruments = state => {
 
     if (!musicInstrument) {
       return {
+        ...instrument,
         symbol: instrument.symbols[0],
         notes: [],
       }
     }
 
     return {
+      ...instrument,
       symbol: musicInstrument.symbol,
       notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
         live: musicInstrument.notes[id % musicInstrument.notes.length] !== '-',
