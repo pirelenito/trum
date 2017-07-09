@@ -1,6 +1,7 @@
 import { createStore } from 'redux'
 import { range } from 'ramda'
 import parseTabs from './parseTabs'
+import singleStrokeRoll from './tabs/singleStrokeRoll.txt'
 
 const { ceil, floor } = Math
 
@@ -10,22 +11,17 @@ const SET_TABLATURE = 'SET_TABLATURE'
 const PLAY = 'PLAY'
 const RESIZE = 'RESIZE'
 
-const NOTE_SIZE = 100
+export const NOTE_SIZE = 100
 
 const initialState = {
   windowSize: {
     width: 0,
     height: 0,
   },
-  tablature: `
-C |X---------------|----------------|X---------------|----------------|
-R |----X---X---X---|X---X---X---X---|----X---X---X---|X---X-------X---|
-S |----o-------o---|----o-------o---|----o-------o---|----o-o-----o---|
-t |----------------|----------------|----------------|-------o--------|
-B |o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|`,
+  tablature: singleStrokeRoll,
   now: 0,
   playbackStart: 0,
-  bpm: 130,
+  bpm: 60,
   drumKit: [
     { midiNote: 46, label: 'hi-hat', symbols: ['hh', 'h'] },
     { midiNote: 49, label: 'ride cymbal', symbols: ['rd', 'r'] },
@@ -75,8 +71,10 @@ export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, 
 
 // selectors
 export const getPlaybackTime = state =>
-  floor((state.now - state.playbackStart) / (60000 / state.bpm) * 100)
+  floor((state.now - state.playbackStart) / (60000 / state.bpm / 4) * 100)
+
 export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 2
+
 export const getMusicInstruments = state => {
   const amountOfVisibleNotes = getAmountOfVisibleNotes(state)
   const instruments = parseTabs(state.tablature)
@@ -100,7 +98,7 @@ export const getMusicInstruments = state => {
       notes: range(firstVisibleNote, amountOfVisibleNotes + firstVisibleNote).map(id => ({
         live: musicInstrument.notes[id % musicInstrument.notes.length] !== '-',
         id,
-        position: id * NOTE_SIZE - NOTE_SIZE / 2 - playbackTime - NOTE_SIZE,
+        position: id * NOTE_SIZE - NOTE_SIZE / 2 - playbackTime,
       })),
     }
   })

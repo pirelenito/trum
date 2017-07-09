@@ -3,7 +3,7 @@ import Worker from 'worker-loader!./worker'
 var audioContext = null
 var isPlaying = false // Are we currently playing?
 var current16thNote // What note is currently last scheduled?
-var tempo = 130.0 // tempo (in beats per minute)
+var tempo = 60.0 // tempo (in beats per minute)
 var lookahead = 25.0 // How frequently to call scheduling function
 // (in milliseconds)
 var scheduleAheadTime = 0.1 // How far ahead to schedule audio (sec)

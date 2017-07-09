@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Note from './Note'
+import { NOTE_SIZE } from '../store'
 
 export default function Track({ notes, height }) {
   return (
@@ -10,7 +11,7 @@ export default function Track({ notes, height }) {
           key={id}
           id={id}
           style={{
-            transform: `translateY(${height - position}px)`,
+            transform: `translateY(${height - NOTE_SIZE - position}px)`,
           }}
         >
           {live ? <Note.Live /> : <Note.Dull />}
