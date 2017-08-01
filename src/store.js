@@ -17,8 +17,8 @@ export const NOTE_SIZE = 50
 
 const initialState = {
   windowSize: {
-    width: 0,
-    height: 0,
+    width: 1024,
+    height: 768,
   },
   tablature: tablature,
   now: 0,
