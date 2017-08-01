@@ -9,6 +9,7 @@ const TICK = 'TICK'
 const INPUT_NOTE = 'INPUT_NOTE'
 const INPUT_FAKE_NOTE = 'INPUT_FAKE_NOTE'
 const SET_TABLATURE = 'SET_TABLATURE'
+const SET_BPM = 'SET_BPM'
 const PLAY = 'PLAY'
 const RESIZE = 'RESIZE'
 
@@ -46,6 +47,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, now: action.payload }
     case SET_TABLATURE:
       return { ...state, tablature: action.payload }
+    case SET_BPM:
+      return { ...state, bpm: action.payload }
     case INPUT_NOTE:
       if (action.payload.intensity === 0) return state
 
@@ -79,6 +82,7 @@ export const tick = now => ({ type: TICK, payload: now })
 export const inputNote = info => ({ type: INPUT_NOTE, payload: info })
 export const inputFakeNote = info => ({ type: INPUT_FAKE_NOTE, payload: info })
 export const setTablature = tablature => ({ type: SET_TABLATURE, payload: tablature })
+export const setBpm = bpm => ({ type: SET_BPM, payload: bpm })
 export const play = timestamp => ({ type: PLAY, payload: timestamp })
 export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, height } })
 
