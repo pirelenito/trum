@@ -87,6 +87,8 @@ export const play = timestamp => ({ type: PLAY, payload: timestamp })
 export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, height } })
 
 // selectors
+export const getBpm = state => state.bpm
+
 export const getPlaybackTime = state =>
   floor((state.now - state.playbackStart) / (60000 / state.bpm / 4) * NOTE_SIZE)
 

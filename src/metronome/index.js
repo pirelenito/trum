@@ -78,6 +78,10 @@ export function play() {
   }
 }
 
+export function setTempo(newTempo) {
+  tempo = newTempo
+}
+
 export function init() {
   audioContext = new AudioContext()
   timerWorker = new Worker()
