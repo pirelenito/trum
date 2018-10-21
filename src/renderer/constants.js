@@ -1,2 +1,2 @@
 export const TRACK_SPACING = 2
-export const NOTE_SPACING = 10
+export const NOTE_SPACING = 5
