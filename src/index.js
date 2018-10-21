@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import './index.css'
-import createTrack from './renderer/createTrack'
+import createSong from './renderer/createSong'
 import createLights from './renderer/createLights'
 
 const scene = new THREE.Scene()
@@ -14,8 +14,16 @@ document.body.appendChild(renderer.domElement)
 const lights = createLights()
 lights.forEach(light => scene.add(light))
 
-const track = createTrack(['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'])
-scene.add(track)
+const tracks = [
+  ['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+]
+
+const song = createSong(tracks)
+scene.add(song)
 
 camera.position.z = 10
 camera.position.y = -15
@@ -24,7 +32,7 @@ camera.rotation.x = 1.5
 console.log(scene, camera)
 
 function animate() {
-  track.position.y -= 0.1
+  song.position.y -= 0.1
   // track.rotation.x -= 0.01
 
   requestAnimationFrame(animate)
