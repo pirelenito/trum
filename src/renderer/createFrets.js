@@ -1,23 +1,27 @@
 import * as THREE from 'three'
+import { TRACK_SPACING, NOTE_SPACING } from './constants'
 
-function createFret(_, index) {
-  const geometry = new THREE.BoxGeometry(20, 0.1, 0.1, 1, 1, 1)
-  const material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    shading: THREE.FlatShading,
-  })
-
-  const note = new THREE.Mesh(geometry, material)
-
-  note.position.z = -0.1
-  note.position.y = index * 10
-
-  return note
-}
-
-export default function createFrets(notes) {
+export default function createFrets(tracks) {
   const group = new THREE.Group()
-  notes[0].map(createFret).forEach(note => group.add(note))
+  const height = 0.1
+
+  tracks[0]
+    .map((_, index) => {
+      const width = tracks.length * TRACK_SPACING
+      const geometry = new THREE.BoxGeometry(width, 0.1, height, 1, 1, 1)
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        shading: THREE.FlatShading,
+      })
+
+      const fret = new THREE.Mesh(geometry, material)
+
+      fret.position.z = -height
+      fret.position.y = index * NOTE_SPACING
+
+      return fret
+    })
+    .forEach(fret => group.add(fret))
 
   return group
 }

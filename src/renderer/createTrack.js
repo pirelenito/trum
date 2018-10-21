@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { NOTE_SPACING } from './constants'
 
 function createNote(index) {
   const geometry = new THREE.BoxGeometry(1.5, 0.7, 0.2, 1, 1, 1)
@@ -9,7 +10,7 @@ function createNote(index) {
 
   const note = new THREE.Mesh(geometry, material)
 
-  note.position.y = index * 10
+  note.position.y = index * NOTE_SPACING
 
   return note
 }

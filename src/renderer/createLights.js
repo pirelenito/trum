@@ -8,12 +8,12 @@ export default function createLights() {
 
   // A directional light shines from a specific direction.
   // It acts like the sun, that means that all the rays produced are parallel.
-  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.9)
+  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.5)
 
   const ambientLight = new THREE.AmbientLight(0xdc8874, 0.5)
 
   // Set the direction of the light
-  shadowLight.position.set(150, 350, 350)
+  shadowLight.position.set(0, -350, 350)
 
   // Allow shadow casting
   shadowLight.castShadow = true
