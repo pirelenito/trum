@@ -1,28 +1,26 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import store, { play } from './store'
-import keyDownSource from './sources/keyDownSource'
-import midiSource from './sources/midiSource'
-import tickSource from './sources/tickSource'
-import windowResizeSource from './sources/windowResizeSource'
-import App from './App'
-import * as metronome from './metronome'
+import * as THREE from 'three'
+import './index.css'
+import createTrack from './renderer/createTrack'
 
-metronome.init()
-metronome.play()
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-keyDownSource(store.dispatch)
-midiSource(store.dispatch)
-tickSource(store.dispatch)
-windowResizeSource(store.dispatch)
-store.dispatch(play(Date.now()))
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
+document.body.appendChild(renderer.domElement)
 
-window.store = store
+const track = createTrack(['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'])
+scene.add(track)
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-)
+camera.position.z = 5
+camera.rotation.x = 0.5
+
+console.log(scene, camera)
+
+function animate() {
+  // track.position.y -= 0.01
+
+  requestAnimationFrame(animate)
+  renderer.render(scene, camera)
+}
+animate()
