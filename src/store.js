@@ -1,7 +1,13 @@
 import { createStore } from 'redux'
 import { range } from 'ramda'
 import parseTabs from './parseTabs'
-import tablature from './tabs/learnToFly.txt'
+
+const tablature = `
+C |x---------------|------------x---|x---------------|------------x---|
+R |----x---x---x---|x---x---x-------|----x---x---x---|x---x---x-------|
+S |----o-------o---|----o-------o---|----o-------o---|----o-------o-oo|
+B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
+`
 
 const { ceil, floor } = Math
 
@@ -83,8 +89,7 @@ export const play = timestamp => ({ type: PLAY, payload: timestamp })
 export const resize = ({ width, height }) => ({ type: RESIZE, payload: { width, height } })
 
 // selectors
-export const getPlaybackTime = state =>
-  floor((state.now - state.playbackStart) / (60000 / state.bpm / 4) * NOTE_SIZE)
+export const getPlaybackTime = state => floor(((state.now - state.playbackStart) / (60000 / state.bpm / 4)) * NOTE_SIZE)
 
 export const getAmountOfVisibleNotes = state => ceil(state.windowSize.height / NOTE_SIZE) + 1
 
@@ -124,7 +129,4 @@ export const getMusicInstruments = state => {
   })
 }
 
-export default createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-)
+export default createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
