@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 
-function createNote(type, index) {
+function createNote(index) {
   const geometry = new THREE.BoxGeometry(1.5, 0.7, 0.2, 1, 1, 1)
   const material = new THREE.MeshPhongMaterial({
-    color: type === '-' ? 0xffffff : 0xf7a59c,
+    color: 0xf7a59c,
     shading: THREE.FlatShading,
   })
 
@@ -16,7 +16,12 @@ function createNote(type, index) {
 
 export default function createTrack(notes) {
   const group = new THREE.Group()
-  notes.map(createNote).forEach(note => group.add(note))
+  notes
+    .map((type, index) => [type, index])
+    .filter(([type]) => type !== '-')
+    .map(([type, index]) => index)
+    .map(createNote)
+    .forEach(note => group.add(note))
 
   return group
 }
