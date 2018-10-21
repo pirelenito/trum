@@ -16,7 +16,6 @@ export default function createTrack({ instrumentId, notes }) {
   const group = new THREE.Group()
   notes
     .map(index => {
-      console.log(instrumentId, colorByInstrumentId[instrumentId])
       const color = colorByInstrumentId[instrumentId]
 
       const geometry = new THREE.BoxGeometry(1.5, 0.7, 0.2, 1, 1, 1)
