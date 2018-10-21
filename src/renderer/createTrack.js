@@ -5,7 +5,7 @@ function createNote(type, index) {
   const material = new THREE.MeshBasicMaterial({ color: type === '-' ? 0xffffff : 0xf7a59c })
   const note = new THREE.Mesh(geometry, material)
 
-  note.position.y = index * 1
+  note.position.y = index * 10
 
   return note
 }

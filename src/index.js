@@ -12,13 +12,14 @@ document.body.appendChild(renderer.domElement)
 const track = createTrack(['c', '-', 'c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'])
 scene.add(track)
 
-camera.position.z = 5
-camera.rotation.x = 0.5
+camera.position.z = 10
+camera.position.y = -15
+camera.rotation.x = 1.5
 
 console.log(scene, camera)
 
 function animate() {
-  // track.position.y -= 0.01
+  // track.position.y -= 0.1
 
   requestAnimationFrame(animate)
   renderer.render(scene, camera)
