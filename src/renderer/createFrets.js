@@ -5,7 +5,7 @@ export default function createFrets(tracks) {
   const group = new THREE.Group()
   const height = 0.1
 
-  tracks[0]
+  tracks[0].notes
     .map((_, index) => {
       const width = tracks.length * TRACK_SPACING
       const geometry = new THREE.BoxGeometry(width, 0.1, height, 1, 1, 1)

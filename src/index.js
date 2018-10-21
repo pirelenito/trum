@@ -25,7 +25,7 @@ B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
 B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
 `
 
-const tracks = values(parseTabs(tablature)).map(({ notes }) => notes)
+const tracks = parseTabs(tablature)
 
 const song = createSong(tracks)
 scene.add(song)
