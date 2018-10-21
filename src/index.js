@@ -16,13 +16,11 @@ const lights = createLights()
 lights.forEach(light => scene.add(light))
 
 const tablature = `
-C |x---------------|------------x---|x---------------|------------x---|
-R |x---x---x---x---|x---x---x-------|----x---x---x---|x---x---x-------|
-S |x---o-------o---|----o-------o---|----o-------o---|----o-------o-oo|
-B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
-B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
-B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
-`
+C  |X---------------|----------------|X---------------|----------------|
+R  |----X---X---X---|X---X---X---X---|----X---X---X---|X---X-------X---|
+S  |----o-------o---|----o-------o---|----o-------o---|----o-o-----o---|
+t  |----------------|----------------|----------------|-------o--------|
+B  |o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|o-o-----o-o-----|`
 
 const song = parseTabs(tablature)
 
@@ -34,7 +32,7 @@ camera.position.y = -15
 camera.rotation.x = 1.5
 
 function animate() {
-  songMesh.position.y -= 0.2
+  songMesh.position.y -= 0.4
 
   requestAnimationFrame(animate)
   renderer.render(scene, camera)
