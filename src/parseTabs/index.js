@@ -1,4 +1,4 @@
-import { identity, sortBy, prop } from 'ramda'
+import { identity, sortBy, prop, uniqBy } from 'ramda'
 import instruments, { findInstrumentBySymbol } from './instruments'
 
 const parseInstrument = line => {
@@ -31,11 +31,14 @@ const parseInstrument = line => {
 }
 
 export default source => {
-  const songInstruments = source
-    .split('\n')
-    .filter(line => line.trim().length > 0)
-    .map(parseInstrument)
-    .filter(identity)
+  const songInstruments = uniqBy(
+    prop('instrumentId'),
+    source
+      .split('\n')
+      .filter(line => line.trim().length > 0)
+      .map(parseInstrument)
+      .filter(identity),
+  )
 
   const length = songInstruments[0].length
 
