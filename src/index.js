@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { values } from 'ramda'
 import './index.css'
 import createSong from './renderer/createSong'
 import createLights from './renderer/createLights'
@@ -25,20 +24,17 @@ B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
 B |o-----o---o---o-|o-----o---o---o-|o-----o---o---o-|o-----o---o-----|
 `
 
-const tracks = parseTabs(tablature)
+const song = parseTabs(tablature)
 
-const song = createSong(tracks)
-scene.add(song)
+const songMesh = createSong(song)
+scene.add(songMesh)
 
 camera.position.z = 10
 camera.position.y = -15
 camera.rotation.x = 1.5
 
-console.log(scene, camera)
-
 function animate() {
-  song.position.y -= 0.2
-  // track.rotation.x -= 0.01
+  songMesh.position.y -= 0.2
 
   requestAnimationFrame(animate)
   renderer.render(scene, camera)

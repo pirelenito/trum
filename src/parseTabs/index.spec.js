@@ -10,28 +10,53 @@ const fixture = [
 
 describe('tabs', () => {
   it('should parse a tab definition', () => {
-    const expected = [
-      {
-        symbol: 'rd',
-        notes: ['c', '-', 'c', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-      },
-      {
-        symbol: 's',
-        notes: ['-', '-', '-', '-', 'o', '-', '-', '-', '-', '-', '-', '-', 'o', '-', '-', '-'],
-      },
-      {
-        symbol: 'f',
-        notes: ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'o', '-', 'o', 'o'],
-      },
-      {
-        symbol: 'y',
-        notes: ['-', '-', '-', '-', 'o', '-', '-', '-', '-', '-', '-', '-', 'o', '-', '-', '-'],
-      },
-    ]
+    const expected = {
+      length: 16,
+      source: fixture,
+      instruments: [
+        {
+          instrumentId: 0,
+          notes: [],
+          length: 16,
+        },
+        {
+          instrumentId: 1,
+          notes: [0, 2],
+          length: 16,
+        },
+        {
+          instrumentId: 2,
+          notes: [4, 12],
+          length: 16,
+        },
+        {
+          instrumentId: 3,
+          notes: [],
+          length: 16,
+        },
+        {
+          instrumentId: 4,
+          notes: [],
+          length: 16,
+        },
+        {
+          instrumentId: 5,
+          notes: [],
+          length: 16,
+        },
+        {
+          instrumentId: 6,
+          notes: [12, 14, 15],
+          length: 16,
+        },
+        {
+          instrumentId: 7,
+          notes: [],
+          length: 16,
+        },
+      ],
+    }
 
-    expect(parseTabs(fixture)[0]).toEqual(expected[0])
-    expect(parseTabs(fixture)[1]).toEqual(expected[1])
-    expect(parseTabs(fixture)[2]).toEqual(expected[2])
-    expect(parseTabs(fixture)[3]).toEqual(expected[3])
+    expect(parseTabs(fixture)).toEqual(expected)
   })
 })
