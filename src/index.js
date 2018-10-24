@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import './index.css'
 import createSong from './renderer/createSong'
 import createLights from './renderer/createLights'
+import createHitArea from './renderer/createHitArea'
 import parseTabs from './parseTabs'
 
 const scene = new THREE.Scene()
@@ -26,6 +27,9 @@ const song = parseTabs(tablature)
 
 const songMesh = createSong(song)
 scene.add(songMesh)
+
+const hitArea = createHitArea(song)
+scene.add(hitArea)
 
 camera.position.z = 10
 camera.position.y = -15

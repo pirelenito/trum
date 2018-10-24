@@ -1,22 +1,11 @@
 import * as THREE from 'three'
-import { NOTE_SPACING } from './constants'
-
-const colorByInstrumentId = {
-  0: '#f7a59c',
-  1: '#fa9846',
-  2: '#5b9193',
-  3: '#8ac8da',
-  4: '#613846',
-  5: '#8ac8da',
-  6: '#8ac8da',
-  7: '#fa9846',
-}
+import { NOTE_SPACING, COLOR_BY_INSTRUMENT_ID } from './constants'
 
 export default function createTrack({ instrumentId, notes }) {
   const group = new THREE.Group()
   notes
     .map(index => {
-      const color = colorByInstrumentId[instrumentId]
+      const color = COLOR_BY_INSTRUMENT_ID[instrumentId]
 
       const geometry = new THREE.BoxGeometry(1.5, 0.7, 0.2, 1, 1, 1)
       const material = new THREE.MeshPhongMaterial({
