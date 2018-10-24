@@ -12,3 +12,4 @@ const instruments = [
 export default instruments
 
 export const findInstrumentBySymbol = symbol => instruments.find(({ symbols }) => symbols.includes(symbol))
+export const findInstrumentByMidiNote = note => instruments.find(({ midiNote }) => midiNote === note)

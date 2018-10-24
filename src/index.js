@@ -4,6 +4,8 @@ import createSong from './renderer/createSong'
 import createLights from './renderer/createLights'
 import createHitArea from './renderer/createHitArea'
 import parseTabs from './parseTabs'
+import listenMidiInput from './inputs/listenMidiInput'
+import { findInstrumentByMidiNote } from './parseTabs/instruments'
 
 const scene = new THREE.Scene()
 scene.fog = new THREE.Fog(0xf7d9aa, 100, 150)
@@ -28,14 +30,31 @@ const song = parseTabs(tablature)
 const songMesh = createSong(song)
 scene.add(songMesh)
 
-const hitArea = createHitArea(song)
+const { group: hitArea, instruments: hitAreaInstruments } = createHitArea(song)
 scene.add(hitArea)
 
 camera.position.z = 10
 camera.position.y = -15
 camera.rotation.x = 1.5
 
+const buttons = song.instruments.map(({ instrumentId }) => ({ instrumentId, pressed: false }))
+
+listenMidiInput(({ note, intensity }) => {
+  const instrument = findInstrumentByMidiNote(note)
+
+  if (instrument) {
+    const button = buttons.find(({ instrumentId }) => instrumentId === instrument.id)
+    button.pressed = intensity > 0
+  }
+})
+
 function animate() {
+  buttons.forEach(({ instrumentId: buttonInstrumentId, pressed }) => {
+    const hitAreaInstrument = hitAreaInstruments.find(({ instrumentId }) => instrumentId === buttonInstrumentId)
+
+    hitAreaInstrument.mesh.position.z = pressed ? -0.4 : -0.2
+  })
+
   songMesh.position.y -= 0.4
 
   requestAnimationFrame(animate)
