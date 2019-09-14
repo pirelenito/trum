@@ -1,4 +1,6 @@
 import parseTabs, { Track, Tabs } from './parseTabs'
+import { readFileSync } from 'fs'
+import path from 'path'
 
 it('parses a simple tab definition', () => {
   const fixture = [
@@ -68,4 +70,9 @@ it('parses multiple sections', () => {
   const C1Track = tabs.tracks.find(track => track.instrument === 'C1') as Track
   expect(C1Track.length).toEqual(64 * 3)
   expect(C1Track.notes).toEqual([96])
+})
+
+it('parses a complex tabs', () => {
+  const source = readFileSync(path.join(__dirname, './fixtures/example1.txt')).toString()
+  expect(parseTabs(source)).toMatchSnapshot()
 })

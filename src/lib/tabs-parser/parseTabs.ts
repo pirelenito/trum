@@ -47,7 +47,7 @@ const parseSection = (source: string, instruments: string[]): Section => {
     .map(parseTrack)
     .filter(identity) as Track[]
 
-  const length = tracks[0].length
+  const length = tracks.length > 0 ? tracks[0].length : 0
 
   const songInstruments = tracks.map(({ instrument }) => instrument)
 
@@ -111,10 +111,18 @@ const joinSections = (sections: Section[], instruments: string[]): Tabs => {
     )
 }
 
-export default (source: string): Tabs => {
-  const instruments = collectInstruments(source)
+const trimLines = (source: string) =>
+  source
+    .split('\n')
+    .map(line => line.trim())
+    .join('\n')
 
-  const sectionSources = source.split(/\r?\n\r?\n/)
+export default (source: string): Tabs => {
+  const trimedSource = trimLines(source)
+
+  const instruments = collectInstruments(trimedSource)
+
+  const sectionSources = trimedSource.split(/\r?\n\r?\n/)
 
   const sections = sectionSources.map(section => parseSection(section, instruments))
 
