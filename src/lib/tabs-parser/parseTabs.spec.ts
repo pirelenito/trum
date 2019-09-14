@@ -104,7 +104,12 @@ it('parses multiple sections', () => {
   expect(C1Track.notes).toEqual([96])
 })
 
-it('parses a complex tabs', () => {
+it('parses complex tabs', () => {
   const source = readFileSync(path.join(__dirname, './fixtures/example1.txt')).toString()
+  expect(parseTabs(source)).toMatchSnapshot()
+})
+
+it('parses tabs with comments', () => {
+  const source = readFileSync(path.join(__dirname, './fixtures/example2.txt')).toString()
   expect(parseTabs(source)).toMatchSnapshot()
 })
