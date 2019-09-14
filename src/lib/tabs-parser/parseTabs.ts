@@ -18,7 +18,7 @@ export interface Tabs {
 }
 
 const parseTrack = (line: string): Track | null => {
-  const match = line.match(/^(.{1,3})\|(.+)/)
+  const match = line.match(/^(.{1,3})\|([\w|-]+)/)
 
   if (!match) {
     // invalid

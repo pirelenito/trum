@@ -41,6 +41,38 @@ it('parses a simple tab definition', () => {
   expect(parseTabs(fixture)).toEqual(expected)
 })
 
+it('parses tabs with comments in the end', () => {
+  const fixture = [
+    'F1|----------------|--------------g-| Put emphasise',
+    'Sn|----------------|-------------o--| on the snare',
+    'B1|g---------------|----------------|',
+  ].join('\n')
+
+  const expected: Tabs = {
+    length: 32,
+    instruments: ['B1', 'F1', 'Sn'],
+    tracks: [
+      {
+        instrument: 'B1',
+        notes: [0],
+        length: 32,
+      },
+      {
+        instrument: 'F1',
+        notes: [30],
+        length: 32,
+      },
+      {
+        instrument: 'Sn',
+        notes: [29],
+        length: 32,
+      },
+    ],
+  }
+
+  expect(parseTabs(fixture)).toEqual(expected)
+})
+
 it('parses multiple sections', () => {
   const fixture = [
     'Intro (00:00)',
