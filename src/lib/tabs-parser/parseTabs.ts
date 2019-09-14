@@ -1,10 +1,20 @@
-import { identity, sortBy, prop, uniqBy } from 'ramda'
-import instruments, { findInstrumentBySymbol } from './instruments'
+import { identity, sortBy, prop, uniq, sort } from 'ramda'
 
-interface Track {
-  instrumentId: number
+export interface Track {
+  instrument: string
   notes: number[]
   length: number
+}
+
+export interface Section {
+  length: number
+  tracks: Track[]
+}
+
+export interface Tabs {
+  length: number
+  tracks: Track[]
+  instruments: string[]
 }
 
 const parseTrack = (line: string): Track | null => {
@@ -15,14 +25,8 @@ const parseTrack = (line: string): Track | null => {
     return null
   }
 
-  const symbol = match[1].trim().toLowerCase()
+  const instrument = match[1].trim()
   const notes = match[2].split('').filter(note => note !== '|' && note !== ' ')
-
-  const instrument = findInstrumentBySymbol(symbol)
-
-  if (!instrument) {
-    return null
-  }
 
   const noteIndexes = notes
     .map((code, index) => [code, index])
@@ -30,32 +34,89 @@ const parseTrack = (line: string): Track | null => {
     .map(([code, index]) => index as number)
 
   return {
-    instrumentId: instrument.id,
+    instrument,
     notes: noteIndexes,
     length: notes.length,
   }
 }
 
-export default (source: string) => {
-  const songTracks: Track[] = uniqBy(prop('instrumentId'), source
+const parseSection = (source: string, instruments: string[]): Section => {
+  const tracks = source
     .split('\n')
     .filter(line => line.trim().length > 0)
     .map(parseTrack)
-    .filter(identity) as Track[])
+    .filter(identity) as Track[]
 
-  const length = songTracks[0].length
+  const length = tracks[0].length
 
-  const songInstrumentIds = songTracks.map(({ instrumentId }) => instrumentId)
+  const songInstruments = tracks.map(({ instrument }) => instrument)
 
   const remainingInstruments = instruments
-    .filter(instrument => !songInstrumentIds.includes(instrument.id))
-    .map(instrument => ({ instrumentId: instrument.id, notes: [], length }))
+    .filter(instrument => !songInstruments.includes(instrument))
+    .map(instrument => ({ instrument, notes: [], length }))
 
-  const allInstruments = sortBy(prop('instrumentId'))([...songTracks, ...remainingInstruments])
+  const allTracks = sortBy(prop('instrument'))([...tracks, ...remainingInstruments])
 
   return {
     length,
-    source,
-    instruments: allInstruments,
+    tracks: allTracks,
   }
+}
+
+const collectInstruments = (source: string) => {
+  const instruments: string[] = []
+  const regexp = /^(.{1,3})\|\S/gm
+
+  let result: RegExpExecArray | null
+  while ((result = regexp.exec(source)) !== null) {
+    instruments.push(result[1].trim())
+  }
+
+  return sort((a, b) => (a > b ? 1 : -1), uniq(instruments))
+}
+
+const joinSections = (sections: Section[], instruments: string[]): Tabs => {
+  return sections
+    .filter(section => section.length > 0)
+    .reduce<Tabs>(
+      (tab: Tabs, section: Section) => {
+        return {
+          instruments: instruments,
+          length: tab.length + section.length,
+          tracks: section.tracks.map((sectionTrack, sectionTrackIndex) => {
+            const tabTrack = tab.tracks[sectionTrackIndex] || {
+              length: 0,
+              notes: [],
+              instrument: sectionTrack.instrument,
+            }
+
+            if (sectionTrack.instrument !== tabTrack.instrument)
+              throw new Error(`missmatch instrument, ${sectionTrack.instrument}, ${tabTrack.instrument}`)
+
+            const mergedTrack: Track = {
+              instrument: sectionTrack.instrument,
+              notes: [...tabTrack.notes, ...sectionTrack.notes.map(note => note + tabTrack.length)],
+              length: sectionTrack.length + tabTrack.length,
+            }
+
+            return mergedTrack
+          }),
+        }
+      },
+      {
+        instruments: instruments,
+        length: 0,
+        tracks: [],
+      },
+    )
+}
+
+export default (source: string): Tabs => {
+  const instruments = collectInstruments(source)
+
+  const sectionSources = source.split(/\r?\n\r?\n/)
+
+  const sections = sectionSources.map(section => parseSection(section, instruments))
+
+  return joinSections(sections, instruments)
 }
