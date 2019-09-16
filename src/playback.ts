@@ -1,7 +1,7 @@
 import WebMidi, { Output } from 'webmidi'
 import parseTabs from './lib/tabs-parser/parseTabs'
 
-const fixture = [
+export const fixture = [
   'INTRODUCTION                        ',
   'C|----------------|x---------------|----------------|----------------|------------x---|',
   'R|----------------|----x---x---x---|x---x---x---x---|x---x---x---x---|x---x---x-------|',
