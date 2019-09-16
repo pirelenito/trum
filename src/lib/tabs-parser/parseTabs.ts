@@ -2,20 +2,19 @@ import { identity, sortBy, prop, uniq, sort } from 'ramda'
 
 export interface Track {
   instrument: string
-  notes: number[]
+  notes: Note[]
   length: number
 }
 
-export interface Section {
-  length: number
-  tracks: Track[]
-}
+type Note = string | null
 
 export interface Tabs {
   length: number
-  tracks: Track[]
+  notes: Note[][]
   instruments: string[]
 }
+
+export type Section = Tabs
 
 const parseTrack = (line: string): Track | null => {
   const match = line.match(/^(.{1,3})\|([\w|-]+)/)
@@ -26,16 +25,14 @@ const parseTrack = (line: string): Track | null => {
   }
 
   const instrument = match[1].trim()
-  const notes = match[2].split('').filter(note => note !== '|' && note !== ' ')
-
-  const noteIndexes = notes
-    .map((code, index) => [code, index])
-    .filter(([code]) => code !== '-')
-    .map(([code, index]) => index as number)
+  const notes = match[2]
+    .split('')
+    .filter(note => note !== '|' && note !== ' ')
+    .map(note => (note === '-' ? null : note))
 
   return {
     instrument,
-    notes: noteIndexes,
+    notes,
     length: notes.length,
   }
 }
@@ -49,17 +46,23 @@ const parseSection = (source: string, instruments: string[]): Section => {
 
   const length = tracks.length > 0 ? tracks[0].length : 0
 
-  const songInstruments = tracks.map(({ instrument }) => instrument)
+  const sectionInstruments = tracks.map(({ instrument }) => instrument)
+
+  const emptyInstrumentNotes = Array.from(Array(length).keys()).map(() => null)
 
   const remainingInstruments = instruments
-    .filter(instrument => !songInstruments.includes(instrument))
-    .map(instrument => ({ instrument, notes: [], length }))
+    .filter(instrument => !sectionInstruments.includes(instrument))
+    .map(instrument => ({ instrument, notes: emptyInstrumentNotes, length }))
 
   const allTracks = sortBy(prop('instrument'))([...tracks, ...remainingInstruments])
+  const firstTrack = allTracks[0]
+
+  const beat = firstTrack.notes.map((_, index) => allTracks.map(track => track.notes[index]))
 
   return {
+    instruments,
     length,
-    tracks: allTracks,
+    notes: beat,
   }
 }
 
@@ -76,39 +79,14 @@ const collectInstruments = (source: string) => {
 }
 
 const joinSections = (sections: Section[], instruments: string[]): Tabs => {
-  return sections
-    .filter(section => section.length > 0)
-    .reduce<Tabs>(
-      (tab: Tabs, section: Section) => {
-        return {
-          instruments: instruments,
-          length: tab.length + section.length,
-          tracks: section.tracks.map((sectionTrack, sectionTrackIndex) => {
-            const tabTrack = tab.tracks[sectionTrackIndex] || {
-              length: 0,
-              notes: [],
-              instrument: sectionTrack.instrument,
-            }
+  const beat = sections.reduce((beat, section) => [...beat, ...section.notes], [] as Note[][])
+  const length = sections.reduce((length, section) => length + section.length, 0)
 
-            if (sectionTrack.instrument !== tabTrack.instrument)
-              throw new Error(`missmatch instrument, ${sectionTrack.instrument}, ${tabTrack.instrument}`)
-
-            const mergedTrack: Track = {
-              instrument: sectionTrack.instrument,
-              notes: [...tabTrack.notes, ...sectionTrack.notes.map(note => note + tabTrack.length)],
-              length: sectionTrack.length + tabTrack.length,
-            }
-
-            return mergedTrack
-          }),
-        }
-      },
-      {
-        instruments: instruments,
-        length: 0,
-        tracks: [],
-      },
-    )
+  return {
+    instruments,
+    notes: beat,
+    length,
+  }
 }
 
 const trimLines = (source: string) =>

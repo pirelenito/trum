@@ -1,4 +1,4 @@
-import parseTabs, { Track, Tabs } from './parseTabs'
+import parseTabs, { Tabs } from './parseTabs'
 import { readFileSync } from 'fs'
 import path from 'path'
 
@@ -14,27 +14,23 @@ it('parses a simple tab definition', () => {
   const expected: Tabs = {
     length: 16,
     instruments: ['F', 'Rd', 'S', 'Y'],
-    tracks: [
-      {
-        instrument: 'F',
-        notes: [12, 14, 15],
-        length: 16,
-      },
-      {
-        instrument: 'Rd',
-        notes: [0, 2],
-        length: 16,
-      },
-      {
-        instrument: 'S',
-        notes: [4, 12],
-        length: 16,
-      },
-      {
-        instrument: 'Y',
-        notes: [4, 12],
-        length: 16,
-      },
+    notes: [
+      [null, 'c', null, null],
+      [null, null, null, null],
+      [null, 'c', null, null],
+      [null, null, null, null],
+      [null, null, 'o', 'o'],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      ['o', null, 'o', 'o'],
+      [null, null, null, null],
+      ['o', null, null, null],
+      ['o', null, null, null],
     ],
   }
 
@@ -43,30 +39,31 @@ it('parses a simple tab definition', () => {
 
 it('parses tabs with comments in the end', () => {
   const fixture = [
-    'F1|----------------|--------------g-| Put emphasise',
-    'Sn|----------------|-------------o--| on the snare',
-    'B1|g---------------|----------------|',
+    'F1|--------|------g-| Put emphasise',
+    'Sn|--------|-----o--| on the snare',
+    'B1|g-------|--------|',
   ].join('\n')
 
   const expected: Tabs = {
-    length: 32,
+    length: 16,
     instruments: ['B1', 'F1', 'Sn'],
-    tracks: [
-      {
-        instrument: 'B1',
-        notes: [0],
-        length: 32,
-      },
-      {
-        instrument: 'F1',
-        notes: [30],
-        length: 32,
-      },
-      {
-        instrument: 'Sn',
-        notes: [29],
-        length: 32,
-      },
+    notes: [
+      ['g', null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+      [null, null, 'o'],
+      [null, 'g', null],
+      [null, null, null],
     ],
   }
 
@@ -95,13 +92,17 @@ it('parses multiple sections', () => {
 
   expect(tabs.instruments).toEqual(['B1', 'C1', 'HH', 'Sn'])
 
-  const SnTrack = tabs.tracks.find(track => track.instrument === 'Sn') as Track
-  expect(SnTrack.length).toEqual(64 * 3)
-  expect(SnTrack.notes).toEqual([100, 108, 116, 124, 132, 140, 148, 156, 164, 172, 180, 188])
+  const SnTrackIndex = tabs.instruments.findIndex(instrument => instrument === 'Sn')
+  const SnTrackNotesIndex = tabs.notes
+    .map((notes, noteIndex) => (notes[SnTrackIndex] ? noteIndex : null))
+    .filter(n => n)
+  expect(SnTrackNotesIndex).toEqual([100, 108, 116, 124, 132, 140, 148, 156, 164, 172, 180, 188])
 
-  const C1Track = tabs.tracks.find(track => track.instrument === 'C1') as Track
-  expect(C1Track.length).toEqual(64 * 3)
-  expect(C1Track.notes).toEqual([96])
+  const C1TrackIndex = tabs.instruments.findIndex(instrument => instrument === 'C1')
+  const C1TrackNotesIndex = tabs.notes
+    .map((notes, noteIndex) => (notes[C1TrackIndex] ? noteIndex : null))
+    .filter(n => n)
+  expect(C1TrackNotesIndex).toEqual([96])
 })
 
 it('parses complex tabs', () => {
