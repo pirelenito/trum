@@ -222,10 +222,12 @@ export default function playback() {
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
 
-      WebMidi.inputs[0].addListener('noteon', 'all', function(e) {
-        console.log('e', e)
-        console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ').')
-      })
+      if (WebMidi.inputs.length > 0) {
+        WebMidi.inputs[0].addListener('noteon', 'all', function(e) {
+          console.log('e', e)
+          console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ').')
+        })
+      }
 
       play(WebMidi.outputs[0])
     }
