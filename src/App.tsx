@@ -1,10 +1,28 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import playback, { fixture } from './playback'
+import parseTabs, { Tabs } from './lib/tabs-parser/parseTabs'
 
 const textInputBackground = '#282C34'
 const background = '#21252B'
 
 const App: React.FC = () => {
+  const [source, setSource] = useState(fixture)
+  const updateSource = useCallback(
+    event => {
+      console.log('value', event)
+      setSource(event.target.value)
+    },
+    [setSource],
+  )
+
+  let tabs: Tabs | null
+
+  try {
+    tabs = parseTabs(source)
+  } catch (e) {
+    tabs = null
+  }
+
   return (
     <div
       style={{
@@ -38,11 +56,17 @@ const App: React.FC = () => {
             fontSize: 12,
             width: '100%',
           }}
-          value={fixture}
+          onChange={updateSource}
+          value={source}
         />
       </div>
       <div>
-        <h2 style={{ fontSize: 16, margin: '24px 0', color: '#dedede' }}>Instruments</h2>
+        <h2 style={{ fontSize: 16, margin: '24px 0 12px 0', color: '#dedede' }}>Instruments</h2>
+        <p style={{ color: '#dedede' }}>{tabs ? tabs.instruments.join(', ') : 'parse error'}</p>
+      </div>
+      <div>
+        <h2 style={{ fontSize: 16, margin: '24px 0 12px 0', color: '#dedede' }}>Length</h2>
+        <p style={{ color: '#dedede' }}>{tabs ? tabs.length : 0}</p>
       </div>
     </div>
   )
