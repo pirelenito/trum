@@ -68,6 +68,10 @@ const App: React.FC = () => {
         <h2 style={{ fontSize: 16, margin: '24px 0 12px 0', color: '#dedede' }}>Length</h2>
         <p style={{ color: '#dedede' }}>{tabs ? tabs.length : 0}</p>
       </div>
+      <div>
+        <h2 style={{ fontSize: 16, margin: '24px 0 12px 0', color: '#dedede' }}>Sections</h2>
+        <p style={{ color: '#dedede' }}>{tabs ? tabs.sectionCount : 0}</p>
+      </div>
     </div>
   )
 }

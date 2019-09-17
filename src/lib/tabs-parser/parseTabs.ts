@@ -12,9 +12,14 @@ export interface Tabs {
   length: number
   notes: Note[][]
   instruments: string[]
+  sectionCount: number
 }
 
-export type Section = Tabs
+export interface Section {
+  length: number
+  notes: Note[][]
+  instruments: string[]
+}
 
 const parseTrack = (line: string): Track | null => {
   const match = line.match(/^(.{1,3})\|([\w|-]+)/)
@@ -44,7 +49,7 @@ const parseSection = (source: string, instruments: string[]): Section => {
     .map(parseTrack)
     .filter(identity) as Track[]
 
-  const length = tracks.length > 0 ? tracks[0].length : 0
+  const length = tracks.reduce((maxLength, track) => (track.length > maxLength ? track.length : maxLength), 0)
 
   const sectionInstruments = tracks.map(({ instrument }) => instrument)
 
@@ -85,6 +90,7 @@ const joinSections = (sections: Section[], instruments: string[]): Tabs => {
   return {
     instruments,
     notes: beat,
+    sectionCount: sections.length,
     length,
   }
 }
@@ -102,7 +108,9 @@ export default (source: string): Tabs => {
 
   const sectionSources = trimedSource.split(/\r?\n\r?\n/)
 
-  const sections = sectionSources.map(section => parseSection(section, instruments))
+  const sections = sectionSources
+    .map(section => parseSection(section, instruments))
+    .filter(section => section.length > 0)
 
   return joinSections(sections, instruments)
 }

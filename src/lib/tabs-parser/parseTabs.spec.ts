@@ -14,6 +14,7 @@ it('parses a simple tab definition', () => {
   const expected: Tabs = {
     length: 16,
     instruments: ['F', 'Rd', 'S', 'Y'],
+    sectionCount: 1,
     notes: [
       [null, 'c', null, null],
       [null, null, null, null],
@@ -47,6 +48,7 @@ it('parses tabs with comments in the end', () => {
   const expected: Tabs = {
     length: 16,
     instruments: ['B1', 'F1', 'Sn'],
+    sectionCount: 1,
     notes: [
       ['g', null, null],
       [null, null, null],
@@ -90,6 +92,7 @@ it('parses multiple sections', () => {
 
   const tabs = parseTabs(fixture)
 
+  expect(tabs.sectionCount).toEqual(3)
   expect(tabs.instruments).toEqual(['B1', 'C1', 'HH', 'Sn'])
 
   const SnTrackIndex = tabs.instruments.findIndex(instrument => instrument === 'Sn')
