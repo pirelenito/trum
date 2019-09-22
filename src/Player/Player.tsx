@@ -1,6 +1,7 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Canvas, useRender } from 'react-three-fiber'
 import { Tabs } from '../lib/tabs-parser/parseTabs'
+import { playTabs } from './midi'
 
 interface PlayerProps {
   parsedTabs?: Tabs
@@ -27,12 +28,24 @@ export default function Player({ parsedTabs }: PlayerProps) {
 
 function InnerPlayer({ parsedTabs }: PlayerProps) {
   const groupRef = useRef<THREE.Group>(null)
+  const startRef = useRef(0)
+  const speed = 200
 
-  useRender(() => {
+  useEffect(() => {
+    if (!parsedTabs) return
+
+    return playTabs(parsedTabs, speed, timestamp => {
+      startRef.current = timestamp
+    })
+  }, [parsedTabs, speed])
+
+  useRender((props, timestamp) => {
     const group = groupRef.current
-    if (!group) return
+    if (!group || !startRef.current) return
 
-    group.position.y -= 0.1
+    // console.log('timestamp', timestamp)
+
+    group.position.y = -(Date.now() - startRef.current) / speed
   })
 
   if (!parsedTabs) return null
