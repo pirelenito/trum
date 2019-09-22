@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { HashRouter as Router, Route } from 'react-router-dom'
 import parseTabs, { Tabs } from './lib/tabs-parser/parseTabs'
 import Editor from './Editor'
 import { reducer, initialState } from './store'
