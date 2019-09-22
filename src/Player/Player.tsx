@@ -1,5 +1,5 @@
-import * as THREE from 'three'
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
+import { Canvas, useRender } from 'react-three-fiber'
 import { Tabs } from '../lib/tabs-parser/parseTabs'
 
 interface PlayerProps {
@@ -7,33 +7,6 @@ interface PlayerProps {
 }
 
 export default function Player({ parsedTabs }: PlayerProps) {
-  const divRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!divRef.current) return
-
-    const element = divRef.current
-
-    const scene = new THREE.Scene()
-    scene.fog = new THREE.Fog(0xf7d9aa, 100, 150)
-
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
-    renderer.setSize(window.innerWidth, window.innerHeight)
-
-    const lights = createLights()
-    lights.forEach(light => scene.add(light))
-
-    function animate() {
-      renderer.render(scene, camera)
-      requestAnimationFrame(animate)
-    }
-
-    element.appendChild(renderer.domElement)
-    animate()
-  })
-
   return (
     <div
       style={{
@@ -44,19 +17,49 @@ export default function Player({ parsedTabs }: PlayerProps) {
         bottom: 0,
         background: 'linear-gradient(#e4e0ba, #f7d9aa)',
       }}
-      ref={divRef}
-    />
+    >
+      <Canvas>
+        <InnerPlayer parsedTabs={parsedTabs} />
+      </Canvas>
+    </div>
   )
 }
 
-function createLights() {
-  const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9)
+function InnerPlayer({ parsedTabs }: PlayerProps) {
+  const groupRef = useRef<THREE.Group>(null)
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
+  useRender(() => {
+    const group = groupRef.current
+    if (!group) return
 
-  const ambientLight = new THREE.AmbientLight(0xdc8874, 0.5)
-  directionalLight.position.set(0, -350, 350)
-  directionalLight.castShadow = false
+    group.position.y -= 0.1
+  })
 
-  return [hemisphereLight, directionalLight, ambientLight]
+  if (!parsedTabs) return null
+  return (
+    <>
+      <hemisphereLight args={[0xaaaaaa, 0x000000, 0.9]} />
+      <ambientLight intensity={0.5} />
+      <group rotation={[-0.9, 0, 0]} position={[(-parsedTabs.instruments.length * 0.8) / 2, -1.5, 2]}>
+        <group ref={groupRef}>
+          {parsedTabs.notes.map((notes, index) => {
+            return (
+              <group key={index} position={[0, index, 0]}>
+                {notes.map((note, noteIndex) =>
+                  !note ? null : (
+                    <mesh position={[noteIndex * 1, 0, 0]} key={noteIndex}>
+                      <boxGeometry attach="geometry" args={[0.8, 0.3, 0.2, 1, 1, 1]} />
+                      <meshPhongMaterial attach="material" color={COLORS[noteIndex % COLORS.length]} />
+                    </mesh>
+                  ),
+                )}
+              </group>
+            )
+          })}
+        </group>
+      </group>
+    </>
+  )
 }
+
+const COLORS = ['#f7a59c', '#fa9846', '#5b9193', '#8ac8da', '#613846', '#8ac8da', '#659eae', '#fa9846']
