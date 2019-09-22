@@ -10,6 +10,7 @@
     "ramda": "^0.26.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
     "typescript": "3.6.3",
     "webmidi": "^2.5.1"
@@ -36,6 +37,7 @@
     ]
   },
   "devDependencies": {
-    "@types/ramda": "^0.26.21"
+    "@types/ramda": "^0.26.21",
+    "@types/react-router-dom": "^4.3.5"
   }
 }
