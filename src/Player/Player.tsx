@@ -40,7 +40,15 @@ function InnerPlayer({ parsedTabs }: PlayerProps) {
     <>
       <hemisphereLight args={[0xaaaaaa, 0x000000, 0.9]} />
       <ambientLight intensity={0.5} />
-      <group rotation={[-0.9, 0, 0]} position={[(-parsedTabs.instruments.length * 0.8) / 2, -1.5, 2]}>
+      <group rotation={[-0.9, 0, 0]} position={[(-parsedTabs.instruments.length * 0.8) / 2, -1.5, 1.5]}>
+        <group>
+          {parsedTabs.instruments.map((instrument, noteIndex) => (
+            <mesh position={[noteIndex * 1, 0, -0.09]} key={noteIndex}>
+              <boxGeometry attach="geometry" args={[0.8, 0.3, 0.01, 1, 1, 1]} />
+              <meshPhongMaterial attach="material" color={COLORS[noteIndex % COLORS.length]} />
+            </mesh>
+          ))}
+        </group>
         <group ref={groupRef}>
           {parsedTabs.notes.map((notes, index) => {
             return (
