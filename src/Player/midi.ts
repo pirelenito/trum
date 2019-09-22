@@ -24,6 +24,8 @@ export function loadTabs(tabs: Tabs, onReady: OnReady) {
   WebMidi.enable(function(err) {
     if (err) {
       console.log('WebMidi could not be enabled.', err)
+
+      onReady(() => {})
     } else {
       console.log('WebMidi enabled!')
 
@@ -31,7 +33,10 @@ export function loadTabs(tabs: Tabs, onReady: OnReady) {
       console.log(WebMidi.outputs)
 
       const output = WebMidi.outputs[0]
-      if (!output) return () => {}
+      if (!output) {
+        console.log('No outputs detected')
+        return onReady(() => {})
+      }
 
       const instrumentNote = tabs.instruments.map(instrument => {
         const midiInstrument = midiInstruments.find(midi => midi.symbols.indexOf(instrument.toLowerCase()) !== -1)
