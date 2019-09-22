@@ -1,4 +1,4 @@
-import WebMidi, { Output } from 'webmidi'
+import WebMidi from 'webmidi'
 import { Tabs } from '../lib/tabs-parser/parseTabs'
 
 const midiInstruments = [
@@ -12,48 +12,15 @@ const midiInstruments = [
   { id: 7, midiNote: 'C#3', icon: 'Cymbal', color: '#fa9846', label: 'crash cymbal', symbols: ['cc', 'c'] },
 ]
 
-interface OnStart {
-  (startTimestamp: number): void
+export interface PlayFunction {
+  (position: number): void
 }
 
-interface Stop {
-  (): void
+interface OnReady {
+  (playFunction: PlayFunction): void
 }
 
-const play = (tabs: Tabs, output: Output, speed: number, onStart: OnStart): Stop => {
-  if (!output) return () => {}
-
-  const instrumentNote = tabs.instruments.map(instrument => {
-    const midiInstrument = midiInstruments.find(midi => midi.symbols.indexOf(instrument.toLowerCase()) !== -1)
-    if (!midiInstrument) throw new Error('no midi found')
-    return midiInstrument.midiNote
-  })
-
-  let timeout: NodeJS.Timeout
-  let position = 0
-
-  const next = () => {
-    if (position === 0) onStart(Date.now())
-    const beat = tabs.notes[position]
-    position = (position + 1) % tabs.length
-
-    beat.forEach((note, index) => {
-      if (!note) return
-      const midiNode = instrumentNote[index]
-      output.playNote(midiNode, 10)
-    })
-
-    timeout = setTimeout(next, speed)
-  }
-
-  next()
-
-  return () => clearTimeout(timeout)
-}
-
-export function playTabs(tabs: Tabs, speed: number, onStart: OnStart) {
-  let stop: Stop
-
+export function loadTabs(tabs: Tabs, onReady: OnReady) {
   WebMidi.enable(function(err) {
     if (err) {
       console.log('WebMidi could not be enabled.', err)
@@ -63,16 +30,26 @@ export function playTabs(tabs: Tabs, speed: number, onStart: OnStart) {
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
 
-      if (WebMidi.inputs.length > 0) {
-        WebMidi.inputs[0].addListener('noteon', 'all', function(e) {
-          console.log('e', e)
-          console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ').')
-        })
-      }
+      const output = WebMidi.outputs[0]
+      if (!output) return () => {}
 
-      stop = play(tabs, WebMidi.outputs[0], speed, onStart)
+      const instrumentNote = tabs.instruments.map(instrument => {
+        const midiInstrument = midiInstruments.find(midi => midi.symbols.indexOf(instrument.toLowerCase()) !== -1)
+        if (!midiInstrument) throw new Error('no midi found')
+        return midiInstrument.midiNote
+      })
+
+      onReady((position: number) => {
+        const beat = tabs.notes[position % tabs.length]
+
+        beat.forEach((note, index) => {
+          if (!note) return
+          const midiNode = instrumentNote[index]
+          output.playNote(midiNode, 10)
+        })
+      })
     }
   })
 
-  return () => stop && stop()
+  return () => WebMidi.disable()
 }

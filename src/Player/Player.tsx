@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react'
+import memoizeOne from 'memoize-one'
 import { Canvas, useRender } from 'react-three-fiber'
 import { Tabs } from '../lib/tabs-parser/parseTabs'
-import { playTabs } from './midi'
+import { loadTabs, PlayFunction } from './midi'
 
 interface PlayerProps {
   parsedTabs?: Tabs
@@ -29,23 +30,29 @@ export default function Player({ parsedTabs }: PlayerProps) {
 function InnerPlayer({ parsedTabs }: PlayerProps) {
   const groupRef = useRef<THREE.Group>(null)
   const startRef = useRef(0)
-  const speed = 200
+  const playStepRef = useRef<PlayFunction | null>(null)
+  const speed = 100
 
   useEffect(() => {
     if (!parsedTabs) return
 
-    return playTabs(parsedTabs, speed, timestamp => {
-      startRef.current = timestamp
+    return loadTabs(parsedTabs, playStep => {
+      startRef.current = Date.now()
+      playStepRef.current = memoizeOne(playStep)
     })
   }, [parsedTabs, speed])
 
-  useRender((props, timestamp) => {
+  useRender(() => {
     const group = groupRef.current
-    if (!group || !startRef.current) return
+    if (!group || !startRef.current || !playStepRef.current) return
 
     // console.log('timestamp', timestamp)
 
-    group.position.y = -(Date.now() - startRef.current) / speed
+    const songPosition = (Date.now() - startRef.current) / speed
+    const position = Math.floor(songPosition)
+    playStepRef.current(position)
+
+    group.position.y = -songPosition
   })
 
   if (!parsedTabs) return null
