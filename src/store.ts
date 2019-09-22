@@ -166,12 +166,31 @@ const fixture = [
   'B|o-----o-o-----o-|o-----o-o-----o-|o-----o-o-----o-|o-----o-o-----o-|b-----b-----b---|',
 ].join('\n')
 
+export interface Instrument {
+  midiNote: string
+  color: string
+  label: string
+  symbols: string[]
+}
+
 export interface State {
   source: string
+  stickInstruments: Instrument[]
+  pedalInstrument: Instrument
 }
 
 export const initialState: State = {
   source: fixture,
+  pedalInstrument: { midiNote: 'C2', color: '#613846', label: 'bass drum', symbols: ['db', 'b'] },
+  stickInstruments: [
+    { midiNote: 'A#2', color: '#f7a59c', label: 'hi-hat', symbols: ['hh', 'h'] },
+    { midiNote: 'D#3', color: '#fa9846', label: 'ride cymbal', symbols: ['rd', 'r'] },
+    { midiNote: 'D2', color: '#5b9193', label: 'snare drum', symbols: ['sn', 's'] },
+    { midiNote: 'C3', color: '#8ac8da', label: 'high tom', symbols: ['t1', 't'] },
+    { midiNote: 'B2', color: '#8ac8da', label: 'low tom', symbols: ['t2'] },
+    { midiNote: 'G2', color: '#8ac8da', label: 'floor tom', symbols: ['ft', 'f'] },
+    { midiNote: 'C#3', color: '#fa9846', label: 'crash cymbal', symbols: ['cc', 'c'] },
+  ],
 }
 
 export type Action = { type: 'updateSource'; newValue: string }

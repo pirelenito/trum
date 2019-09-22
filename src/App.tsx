@@ -22,7 +22,16 @@ const App: React.FC = () => {
         path="/editor"
         render={() => <Editor source={state.source} parsedTabs={parsedTabs} dispatch={dispatch} />}
       />
-      <Route path="/player" render={() => <Player parsedTabs={parsedTabs} />} />
+      <Route
+        path="/player"
+        render={() => (
+          <Player
+            parsedTabs={parsedTabs}
+            pedalInstrument={state.pedalInstrument}
+            stickInstruments={state.stickInstruments}
+          />
+        )}
+      />
     </Router>
   )
 }

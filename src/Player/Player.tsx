@@ -3,12 +3,15 @@ import memoizeOne from 'memoize-one'
 import { Canvas, useRender } from 'react-three-fiber'
 import { Tabs } from '../lib/tabs-parser/parseTabs'
 import { loadTabs, PlayFunction } from './midi'
+import { Instrument } from '../store'
 
 interface PlayerProps {
   parsedTabs?: Tabs
+  stickInstruments: Instrument[]
+  pedalInstrument: Instrument
 }
 
-export default function Player({ parsedTabs }: PlayerProps) {
+export default function Player({ parsedTabs, stickInstruments, pedalInstrument }: PlayerProps) {
   return (
     <div
       style={{
@@ -21,19 +24,18 @@ export default function Player({ parsedTabs }: PlayerProps) {
       }}
     >
       <Canvas>
-        <InnerPlayer parsedTabs={parsedTabs} />
+        <InnerPlayer parsedTabs={parsedTabs} stickInstruments={stickInstruments} pedalInstrument={pedalInstrument} />
       </Canvas>
     </div>
   )
 }
 
-function InnerPlayer({ parsedTabs }: PlayerProps) {
+function InnerPlayer({ parsedTabs, stickInstruments, pedalInstrument }: PlayerProps) {
   const groupRef = useRef<THREE.Group>(null)
   const startRef = useRef(0)
   const playStepRef = useRef<PlayFunction | null>(null)
-  const noteBoxMap = [1, 2, 3, 4, 5, 6, 7]
-  const noteLineIndex = 0
-  const speed = 300
+
+  const speed = 100
 
   useEffect(() => {
     if (!parsedTabs) return
@@ -57,38 +59,49 @@ function InnerPlayer({ parsedTabs }: PlayerProps) {
 
   if (!parsedTabs) return null
 
+  const stickInstrumentsIndexes = stickInstruments.map(stickInstrument =>
+    parsedTabs.instruments.findIndex(symbol => stickInstrument.symbols.indexOf(symbol.toLowerCase()) !== -1),
+  )
+
+  const pedalInstrumentIndex = parsedTabs.instruments.findIndex(
+    symbol => pedalInstrument.symbols.indexOf(symbol.toLowerCase()) !== -1,
+  )
+
+  const stickColors = stickInstruments.map(stickInstrument => stickInstrument.color)
+  const pedalColor = pedalInstrument.color
+
   return (
     <>
       <hemisphereLight args={[0xaaaaaa, 0x000000, 0.9]} />
       <ambientLight intensity={0.5} />
-      <group rotation={[-0.9, 0, 0]} position={[(-noteBoxMap.length * 0.8) / 2, -1.5, 1.5]}>
+      <group rotation={[-0.9, 0, 0]} position={[(-stickInstrumentsIndexes.length * 0.8) / 2, -1.5, 1.5]}>
         <group>
-          {noteBoxMap.map((instrumentIndex, orderIndex) => (
-            <mesh position={[orderIndex * 1, 0, -0.09]} key={instrumentIndex}>
+          {stickInstrumentsIndexes.map((instrumentIndex, orderIndex) => (
+            <mesh position={[orderIndex * 1, 0, -0.09]} key={orderIndex}>
               <boxGeometry attach="geometry" args={[0.8, 0.3, 0.01, 1, 1, 1]} />
-              <meshPhongMaterial attach="material" color={COLORS[instrumentIndex % COLORS.length]} />
+              <meshPhongMaterial attach="material" color={stickColors[orderIndex]} />
             </mesh>
           ))}
         </group>
         <group ref={groupRef}>
           {parsedTabs.notes.map((notes, index) => {
-            const noteLine = notes[noteLineIndex]
+            const noteLine = notes[pedalInstrumentIndex]
 
             return (
               <group key={index} position={[0, index, 0]}>
-                {noteBoxMap.map((instrumentIndex, orderIndex) => {
+                {stickInstrumentsIndexes.map((instrumentIndex, orderIndex) => {
                   const note = notes[instrumentIndex]
                   return !note ? null : (
                     <mesh position={[orderIndex * 1, 0, 0]} key={instrumentIndex}>
                       <boxGeometry attach="geometry" args={[0.8, 0.3, 0.2, 1, 1, 1]} />
-                      <meshPhongMaterial attach="material" color={COLORS[instrumentIndex % COLORS.length]} />
+                      <meshPhongMaterial attach="material" color={stickColors[orderIndex]} />
                     </mesh>
                   )
                 })}
                 {!noteLine ? null : (
-                  <mesh position={[noteBoxMap.length / 2 - 0.5, 0, -0.05]} key={noteLineIndex}>
-                    <boxGeometry attach="geometry" args={[noteBoxMap.length - 0.4, 0.1, 0.05, 1, 1, 1]} />
-                    <meshPhongMaterial attach="material" color={COLORS[noteLineIndex % COLORS.length]} />
+                  <mesh position={[stickInstrumentsIndexes.length / 2 - 0.5, 0, -0.05]} key={pedalInstrumentIndex}>
+                    <boxGeometry attach="geometry" args={[stickInstrumentsIndexes.length - 0.4, 0.1, 0.05, 1, 1, 1]} />
+                    <meshPhongMaterial attach="material" color={pedalColor} />
                   </mesh>
                 )}
               </group>
@@ -99,5 +112,3 @@ function InnerPlayer({ parsedTabs }: PlayerProps) {
     </>
   )
 }
-
-const COLORS = ['#f7a59c', '#fa9846', '#5b9193', '#8ac8da', '#613846', '#8ac8da', '#659eae', '#fa9846']
